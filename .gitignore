@@ -1,0 +1,15 @@
+# File thực thi và file tạm của C++
+*.exe
+*.o
+*.obj
+*.out
+app.exe
+main.exe
+
+# Cấu hình IDE / Editor
+.vscode/
+.idea/
+
+# File tạm của hệ điều hành
+Thumbs.db
+.DS_Store

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Library Visualizer</title>
+    <style>
+        body { font-family: Segoe UI, sans-serif; margin: 30px; background: #f4f6f8; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #007acc; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; }
+        .p1 { background: #e74c3c; } .p2 { background: #e67e22; } .p3 { background: #f1c40f; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Trực quan hóa Dữ liệu Hệ thống (DSA Memory State)</h2>
+        <p>Chọn file <b>visualizer/state.json</b> vừa được C++ xuất ra để cập nhật trạng thái mới nhất:</p>
+        <input type="file" id="fileInput" accept=".json">
+        <h3 id="statusText" style="margin-top: 15px;">Chưa nạp dữ liệu.</h3>
+    </div>
+
+    <div class="card">
+        <h3>Danh sách Tài liệu trong Bộ nhớ RAM</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã ID</th>
+                    <th>Tên Tài liệu</th>
+                    <th>Mức Ưu tiên</th>
+                    <th>Hạn trả (Timestamp)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    document.getElementById('statusText').innerText = `Tổng số bản ghi trên RAM: ${data.total}`;
+                    const tbody = document.getElementById('tableBody');
+                    tbody.innerHTML = '';
+
+                    data.items.slice(0, 50).forEach(doc => { // Hiển thị 50 dòng đầu
+                        const tr = document.createElement('tr');
+                        const pClass = doc.priority <= 2 ? `p${doc.priority}` : 'p3';
+                        tr.innerHTML = `
+                            <td><b>${doc.id}</b></td>
+                            <td>${doc.title}</td>
+                            <td><span class="badge ${pClass}">Cấp ${doc.priority}</span></td>
+                            <td>${doc.dueDate}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } catch(err) {
+                    alert('Lỗi định dạng file JSON!');
+                }
+            };
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html>
