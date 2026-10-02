@@ -1,39 +1,51 @@
-#ifndef MY_DOUBLY_LINKED_LIST_H
-#define MY_DOUBLY_LINKED_LIST_H
-
+#pragma once
 #include <iostream>
 #include <string>
 
-// Cấu trúc Node tự định nghĩa
-struct Node {
-    std::string documentID;
-    std::string data; // Chứa thông tin tài liệu hoặc người dùng
-    Node* prev;
-    Node* next;
+// Node hỗ trợ Template cho mọi kiểu dữ liệu (kể cả Document)
+template <typename T>
+struct DNode {
+    std::string key; // DocumentID (dùng kết nối O(1) với Hash Table)
+    T data;
+    DNode* prev;
+    DNode* next;
 
-    Node(std::string id, std::string d) : documentID(id), data(d), prev(nullptr), next(nullptr) {}
+    DNode(const std::string& k, const T& val) 
+        : key(k), data(val), prev(nullptr), next(nullptr) {}
 };
 
+template <typename T>
 class MyDoublyLinkedList {
 private:
-    Node* head;
-    Node* tail;
+    DNode<T>* head;
+    DNode<T>* tail;
+    int size;
+
+    // Ngăn chặn copy ngầm định để tránh lỗi giải phóng bộ nhớ 2 lần (Double Free)
+    MyDoublyLinkedList(const MyDoublyLinkedList&) = delete;
+    MyDoublyLinkedList& operator=(const MyDoublyLinkedList&) = delete;
 
 public:
-    MyDoublyLinkedList() : head(nullptr), tail(nullptr) {}
+    MyDoublyLinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
     ~MyDoublyLinkedList() {
-        Node* current = head;
-        while (current != nullptr) {
-            Node* nextNode = current->next;
-            delete current;
-            current = nextNode;
-        }
+        clear();
     }
 
-    // Thêm vào cuối danh sách (duy trì thứ tự Waitlist)
-    Node* append(std::string id, std::string data) {
-        Node* newNode = new Node(id, data);
+    void clear() {
+        DNode<T>* curr = head;
+        while (curr != nullptr) {
+            DNode<T>* nextNode = curr->next;
+            delete curr;
+            curr = nextNode;
+        }
+        head = tail = nullptr;
+        size = 0;
+    }
+
+    // Thêm vào cuối danh sách - O(1)
+    DNode<T>* pushBack(const std::string& key, const T& val) {
+        DNode<T>* newNode = new DNode<T>(key, val);
         if (tail == nullptr) {
             head = tail = newNode;
         } else {
@@ -41,26 +53,32 @@ public:
             newNode->prev = tail;
             tail = newNode;
         }
+        size++;
         return newNode;
     }
 
-    // Xóa một Node bất kỳ trong O(1) (Node này được lấy ra từ Hash Table)
-    void removeNode(Node* node) {
+    // Xóa Node trực tiếp trong O(1)
+    void removeNode(DNode<T>* node) {
         if (!node) return;
-        
-        if (node->prev) {
+
+        if (node->prev != nullptr) {
             node->prev->next = node->next;
         } else {
-            head = node->next; // Nếu là node đầu
+            head = node->next;
         }
 
-        if (node->next) {
+        if (node->next != nullptr) {
             node->next->prev = node->prev;
         } else {
-            tail = node->prev; // Nếu là node cuối
+            tail = node->prev;
         }
-        delete node;
-    }
-};
 
-#endif
+        delete node;
+        size--;
+    }
+
+    DNode<T>* getHead() const { return head; }
+    DNode<T>* getTail() const { return tail; }
+    int getSize() const { return size; }
+    bool isEmpty() const { return size == 0; }
+};
