@@ -13,13 +13,19 @@ public:
         }
 
         const auto& docs = engine.getRawMemoryData();
-        out << "{\n  \"total\": " << docs.size() << ",\n  \"items\": [\n";
+        out << "{\n";
+        out << "  \"total\": " << docs.size() << ",\n";
+        out << "  \"hash_capacity\": " << engine.getHashTableCapacity() << ",\n";
+        out << "  \"load_factor\": " << engine.getHashTableLoadFactor() << ",\n";
+        out << "  \"hash_buckets\": " << engine.getHashTableVisualJson() << ",\n";
+        out << "  \"items\": [\n";
         for (size_t i = 0; i < docs.size(); ++i) {
             out << "    " << docs[i].toJson();
             if (i + 1 < docs.size()) out << ",";
             out << "\n";
         }
-        out << "  ]\n}\n";
+        out << "  ]\n";
+        out << "}\n";
         out.close();
         std::cout << "[Tầng 1] Da cap nhat trang thai he thong vao: " << outputPath << "\n";
     }
