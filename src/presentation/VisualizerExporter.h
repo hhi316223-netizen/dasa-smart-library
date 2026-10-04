@@ -18,7 +18,7 @@ public:
         out << "  \"hash_capacity\": " << engine.getHashTableCapacity() << ",\n";
         out << "  \"load_factor\": " << engine.getHashTableLoadFactor() << ",\n";
         out << "  \"hash_buckets\": " << engine.getHashTableVisualJson() << ",\n";
-        out << "  \"items\": [\n";
+        out << "  \"hash_buckets\": [],\n";
         for (size_t i = 0; i < docs.size(); ++i) {
             out << "    " << docs[i].toJson();
             if (i + 1 < docs.size()) out << ",";
