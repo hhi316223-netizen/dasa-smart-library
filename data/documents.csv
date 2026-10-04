@@ -1,1 +1,10 @@
-//hfhfhh
+BK00001,Cau truc Du lieu va Giai thuat,SV251101,Borrowed,1791234567,1,1790123456,TEXTBOOK,Good
+BK00002,Lap trinh Huong doi tuong C++,SV251102,Available,0,3,1790123500,TEXTBOOK,Good
+BK00003,Co so Tri tue Nhan tao,,Available,0,2,1790123600,REFERENCE,New
+BK00004,He dieu hanh va Kien truc May tinh,SV251104,Overdue,1790999999,1,1790123700,TEXTBOOK,Fair
+BK00005,Giai tich 2 va Dai so Tuyen tinh,,Reserved,0,2,1790123800,TEXTBOOK,Good
+BK00006,Mang may tinh can ban,SV251106,Borrowed,1791555555,4,1790123900,REFERENCE,Torn
+BK00007,Co so Du lieu Quan he,,Available,0,3,1790124000,TEXTBOOK,Good
+BK00008,Nhap mon Ky thuat Phan mem,SV251108,Borrowed,1791888888,2,1790124100,TEXTBOOK,Good
+BK00009,Xac suat Thong ke cho AI,,Available,0,1,1790124200,REFERENCE,Good
+BK00010,Thiet ke He thong Thong tin,SV251110,Overdue,1790888888,5,1790124300,REFERENCE,Poor

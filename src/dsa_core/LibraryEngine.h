@@ -1,51 +1,43 @@
 #pragma once
 #include "../models/Document.h"
+#include "MyHashTable.h" // Nhúng Bảng băm của Thành viên 1
 #include <vector>
 #include <iostream>
 
-// Khi các bạn viết xong, hãy mở include các file tương ứng:
-// #include "MyHashTable.h"
-// #include "MyMinHeap.h"
-// #include "MyAVLTree.h"
-
 class LibraryEngine {
 private:
-    // [TV1 sẽ thay thế mảng này bằng MyHashTable docTable;]
-    // [TV2 sẽ thay thế mảng này bằng MyMinHeap waitlistQueue;]
-    // [TV3 sẽ thay thế mảng này bằng MyAVLTree auditTree;]
-    std::vector<Document> memoryStorage; 
+    MyHashTable docTable;                // CẤU TRÚC 1 (TV1): Quản lý tra cứu O(1)
+    std::vector<Document> memoryStorage; // Tạm thời giữ để nạp các thao tác khác
 
 public:
     void bulkLoad(const std::vector<Document>& rawData) {
         memoryStorage = rawData;
-        std::cout << "[Tầng 2 - Core] Da nap " << memoryStorage.size() 
-                  << " ban ghi vao bo nho RAM.\n";
-    }
-
-    // MC1: Tra cứu theo ID (TV1 phụ trách)
-    bool findDocumentById(const std::string& id, Document& result) {
-        // [TV1 nhét code: return docTable.search(id, result);]
-        for (const auto& item : memoryStorage) {
-            if (item.documentId == id) {
-                result = item;
-                return true;
-            }
+        
+        // Nạp toàn bộ dữ liệu vào Bảng băm của Thành viên 1
+        for (const auto& doc : rawData) {
+            docTable.insert(doc);
         }
-        return false;
+
+        std::cout << "[Tầng 2 - DSA Core] Da nap " << docTable.size() 
+                  << " ban ghi vao Bang Bam. (Load factor: " 
+                  << docTable.getLoadFactor() << ")\n";
     }
 
-    // FR1: Rút người có độ ưu tiên cao nhất (TV2 phụ trách)
+    // NGHIỆP VỤ MC1: Tra cứu chính xác theo ID thông qua Bảng băm
+    bool findDocumentById(const std::string& id, Document& result) {
+        return docTable.search(id, result); // O(1) trung bình!
+    }
+
+    // FR1: (Đang chờ Thành viên 2 nhúng Min-Heap)
     bool pollNextPriority(Document& result) {
-        // [TV2 nhét code: return waitlistQueue.extractMin(result);]
         if (memoryStorage.empty()) return false;
         result = memoryStorage[0];
         return true;
     }
 
-    // FR2: Kiểm toán giao dịch theo khoảng ngày (TV3 phụ trách)
+    // FR2: (Đang chờ Thành viên 3 nhúng AVL Tree)
     std::vector<Document> auditRange(long long startDate, long long endDate) {
         std::vector<Document> res;
-        // [TV3 nhét code: auditTree.rangeQuery(startDate, endDate, res);]
         for (const auto& item : memoryStorage) {
             if (item.dueDate >= startDate && item.dueDate <= endDate) {
                 res.push_back(item);
@@ -54,7 +46,6 @@ public:
         return res;
     }
 
-    // Trả về dữ liệu để Tầng 1 xuất file JSON trực quan hóa
     const std::vector<Document>& getRawMemoryData() const {
         return memoryStorage;
     }
