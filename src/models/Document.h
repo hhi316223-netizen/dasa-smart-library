@@ -1,15 +1,23 @@
-#ifndef DOCUMENT_H
-#define DOCUMENT_H
-
+#pragma once
 #include <string>
 
-// Dinh nghia thong tin mot tai lieu trong thu vien
-struct Document {
-    int id;             // Ma tai lieu (DocumentID)
-    std::string title;  // Tua de sach
-    std::string author; // Tac gia
-    int year;           // Nam xuat ban (dung de sap xep)
-    int priority;       // Muc uu tien muon sach (1 den 5)
-};
+enum class DocumentStatus { Available, Borrowed, Overdue, Reserved };
 
-#endif
+struct Document {
+    std::string documentId;       // Mã định danh duy nhất (Alphanumeric: BK00001)
+    std::string title;            // Tên tài liệu
+    std::string borrowerId;       // Mã người mượn
+    DocumentStatus status;        // Trạng thái hiện tại
+    long long dueDate;            // Dấu thời gian hạn trả
+    int priorityLevel;            // Mức ưu tiên (1 đến 5)
+    long long registrationTime;   // Dấu thời gian đăng ký (FIFO)
+    std::string auditCategory;    // Mã phân nhóm kiểm toán
+    std::string conditionState;   // Tình trạng vật lý
+
+    // Hàm xuất JSON phục vụ Web Visualizer
+    std::string toJson() const {
+        return "{\"id\":\"" + documentId + "\",\"title\":\"" + title + 
+               "\",\"priority\":" + std::to_string(priorityLevel) + 
+               ",\"dueDate\":" + std::to_string(dueDate) + "}";
+    }
+};
