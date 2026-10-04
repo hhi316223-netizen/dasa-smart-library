@@ -10,6 +10,12 @@ private:
     std::vector<Document> memoryStorage; // Tạm thời giữ để nạp các thao tác khác
 
 public:
+
+    // [BỔ SUNG CHO VISUALIZER]: Cung cấp thông số cấu trúc dữ liệu cho Tầng 1
+    std::string getHashTableVisualJson() const { return docTable.getBucketsJson(); }
+    size_t getHashTableCapacity() const { return docTable.getCapacity(); }
+    double getHashTableLoadFactor() const { return docTable.getLoadFactor(); }
+    
     void bulkLoad(const std::vector<Document>& rawData) {
         memoryStorage = rawData;
         

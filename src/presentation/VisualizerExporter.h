@@ -17,25 +17,22 @@ public:
             return;
         }
 
-        file << "[\n";
-        for (size_t i = 0; i < list.size(); i++) {
-            file << "  {\n";
-            file << "    \"id\": " << list[i].id << ",\n";
-            file << "    \"title\": \"" << list[i].title << "\",\n";
-            file << "    \"author\": \"" << list[i].author << "\",\n";
-            file << "    \"year\": " << list[i].year << ",\n";
-            file << "    \"priority\": " << list[i].priority << "\n";
-            file << "  }";
-            // Tranh them dau phay o phan tu cuoi cung de khong loi cu phap JSON
-            if (i + 1 < list.size()) {
-                file << ",";
-            }
-            file << "\n";
+        const auto& docs = engine.getRawMemoryData();
+        out << "{\n";
+        out << "  \"total\": " << docs.size() << ",\n";
+        out << "  \"hash_capacity\": " << engine.getHashTableCapacity() << ",\n";
+        out << "  \"load_factor\": " << engine.getHashTableLoadFactor() << ",\n";
+        out << "  \"hash_buckets\": " << engine.getHashTableVisualJson() << ",\n";
+        out << "  \"items\": [\n";
+        for (size_t i = 0; i < docs.size(); ++i) {
+            out << "    " << docs[i].toJson();
+            if (i + 1 < docs.size()) out << ",";
+            out << "\n";
         }
-        file << "]\n";
-
-        file.close();
-        std::cout << "-> Da xuat thanh cong tap mau JSON tai: " << filename << "\n";
+        out << "  ]\n";
+        out << "}\n";
+        out.close();
+        std::cout << "[Tầng 1] Da cap nhat trang thai he thong vao: " << outputPath << "\n";
     }
 };
 

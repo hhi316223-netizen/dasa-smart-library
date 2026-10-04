@@ -64,6 +64,31 @@ private:
     }
 
 public:
+
+    // [BỔ SUNG CHO VISUALIZER]: Xuất trạng thái các bucket và chuỗi chaining ra JSON
+    std::string getBucketsJson() const {
+        std::string json = "[\n";
+        bool firstBucket = true;
+        for (size_t i = 0; i < capacity; ++i) {
+            if (table[i] != nullptr) {
+                if (!firstBucket) json += ",\n";
+                firstBucket = false;
+                json += "    {\"bucket\": " + std::to_string(i) + ", \"chain\": [";
+                HashNode* cur = table[i];
+                bool firstNode = true;
+                while (cur != nullptr) {
+                    if (!firstNode) json += ", ";
+                    firstNode = false;
+                    json += cur->value.toJson();
+                    cur = cur->next;
+                }
+                json += "]}";
+            }
+        }
+        json += "\n  ]";
+        return json;
+    }
+    
     // Khởi tạo bảng băm với dung lượng mặc định là số nguyên tố
     MyHashTable(size_t initialCapacity = 1009)
         : capacity(initialCapacity), count(0) {

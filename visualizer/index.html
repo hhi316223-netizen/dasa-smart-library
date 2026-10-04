@@ -2,71 +2,162 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Library Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Library — DSA State Visualizer</title>
     <style>
-        body { font-family: Segoe UI, sans-serif; margin: 30px; background: #f4f6f8; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background: #007acc; color: white; }
-        tr:nth-child(even) { background: #f9f9f9; }
-        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; }
-        .p1 { background: #e74c3c; } .p2 { background: #e67e22; } .p3 { background: #f1c40f; color: #333; }
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --p1: #ef4444; /* Khẩn cấp */
+            --p2: #f97316;
+            --p3: #eab308;
+            --p4: #10b981;
+            --p5: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; }
+        body { background: var(--bg); color: var(--text-main); padding: 24px; line-height: 1.5; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 1.5rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .file-box { display: flex; align-items: center; gap: 12px; background: var(--card-bg); padding: 8px 16px; border-radius: 8px; border: 1px dashed var(--border); }
+        .file-box input[type="file"] { color: var(--text-sub); font-size: 0.85rem; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .stat-card .label { font-size: 0.8rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-top: 4px; }
+
+        /* Navigation Tabs */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .tab-btn { background: transparent; border: none; color: var(--text-sub); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .tab-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+        .tab-btn.active { background: var(--primary); color: #000; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Hash Table Visualizer */
+        .search-hash-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; }
+        .search-hash-box input { background: #0f172a; border: 1px solid var(--border); color: #fff; padding: 10px 14px; border-radius: 6px; flex: 1; outline: none; }
+        .search-hash-box button { background: var(--accent); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .hash-calc-info { font-size: 0.9rem; color: var(--text-sub); }
+
+        .bucket-list { display: flex; flex-direction: column; gap: 12px; max-height: 600px; overflow-y: auto; padding-right: 8px; }
+        .bucket-row { display: flex; align-items: center; gap: 12px; background: rgba(30, 41, 59, 0.5); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+        .bucket-row.highlight { border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); background: rgba(250, 204, 21, 0.05); }
+        .bucket-idx { background: #0f172a; border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-weight: bold; color: var(--primary); min-width: 110px; text-align: center; font-size: 0.85rem; }
+
+        .chain-nodes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .node-card { background: #1e293b; border: 1px solid #475569; border-radius: 6px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; min-width: 160px; font-size: 0.85rem; }
+        .node-card.active-match { border-color: #facc15; background: #3a3210; }
+        .node-card .id { font-weight: bold; color: #fff; }
+        .node-card .title { color: var(--text-sub); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+        .arrow { color: var(--accent); font-weight: bold; font-size: 1.2rem; }
+        .null-node { color: var(--text-sub); font-size: 0.8rem; font-style: italic; }
+
+        /* Badge Priorities */
+        .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; color: #fff; width: fit-content; }
+        .p-1 { background: var(--p1); } .p-2 { background: var(--p2); } .p-3 { background: var(--p3); color: #000; }
+        .p-4 { background: var(--p4); } .p-5 { background: var(--p5); }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th { background: #0f172a; color: var(--text-sub); font-size: 0.8rem; text-transform: uppercase; }
+        tr:hover { background: rgba(255,255,255,0.02); }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Trực quan hóa Dữ liệu Hệ thống (DSA Memory State)</h2>
-        <p>Chọn file <b>visualizer/state.json</b> vừa được C++ xuất ra để cập nhật trạng thái mới nhất:</p>
-        <input type="file" id="fileInput" accept=".json">
-        <h3 id="statusText" style="margin-top: 15px;">Chưa nạp dữ liệu.</h3>
+
+    <header>
+        <div>
+            <h1>⚡ Smart Library — DSA Visualizer</h1>
+            <p style="color: var(--text-sub); font-size: 0.85rem;">Trực quan hóa cấu trúc bộ nhớ RAM (In-Memory Data Structures)</p>
+        </div>
+        <div class="file-box">
+            <span>Nạp trạng thái:</span>
+            <input type="file" id="jsonFileInput" accept=".json">
+        </div>
+    </header>
+
+    <!-- Thống kê hệ thống -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">Tổng Bản ghi (N)</div>
+            <div class="value" id="statTotal">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Dung lượng Bảng băm (M)</div>
+            <div class="value" id="statCapacity">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Load Factor (α = N/M)</div>
+            <div class="value" id="statLoadFactor">0.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Số Buckets có Dữ liệu</div>
+            <div class="value" id="statBucketsUsed">0</div>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Danh sách Tài liệu trong Bộ nhớ RAM</h3>
+    <!-- Thanh chuyển Tab -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('hashTab')">🔍 Bảng Băm & Chaining (MC1)</button>
+        <button class="tab-btn" onclick="switchTab('priorityTab')">⚡ Hàng Đợi Ưu Tiên (FR1 / MC2)</button>
+        <button class="tab-btn" onclick="switchTab('rawTab')">📋 Danh Sách Bản Ghi (Table)</button>
+    </div>
+
+    <!-- TAB 1: TRỰC QUAN HÓA BẢNG BĂM -->
+    <div id="hashTab" class="tab-content active">
+        <div class="search-hash-box">
+            <input type="text" id="hashSearchInput" placeholder="Nhập DocumentID cần mô phỏng băm (VD: BK00001)...">
+            <button onclick="simulateHashSearch()">Tra cứu & Định vị Bucket</button>
+            <div class="hash-calc-info" id="hashFormulaText">Công thức: hash = (∑ c * 31^k) % Capacity</div>
+        </div>
+
+        <div class="bucket-list" id="bucketContainer">
+            <div style="text-align: center; color: var(--text-sub); padding: 40px;">Chưa nạp file state.json. Hãy chạy C++ và chọn file state.json ở góc trên!</div>
+        </div>
+    </div>
+
+    <!-- TAB 2: HÀNG ĐỢI ƯU TIÊN -->
+    <div id="priorityTab" class="tab-content">
         <table>
             <thead>
                 <tr>
                     <th>Mã ID</th>
                     <th>Tên Tài liệu</th>
-                    <th>Mức Ưu tiên</th>
-                    <th>Hạn trả (Timestamp)</th>
+                    <th>Mức Ưu Tiên (FR1)</th>
+                    <th>Thời Gian Hạn Trả (DueDate)</th>
                 </tr>
             </thead>
-            <tbody id="tableBody"></tbody>
+            <tbody id="priorityTableBody"></tbody>
         </table>
     </div>
 
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+    <!-- TAB 3: TOÀN BỘ BẢN GHI -->
+    <div id="rawTab" class="tab-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>DocumentID</th>
+                    <th>Tên Sách</th>
+                    <th>Mức Ưu Tiên</th>
+                    <th>DueDate Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="rawTableBody"></tbody>
+        </table>
+    </div>
 
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                try {
-                    const data = JSON.parse(event.target.result);
-                    document.getElementById('statusText').innerText = `Tổng số bản ghi trên RAM: ${data.total}`;
-                    const tbody = document.getElementById('tableBody');
-                    tbody.innerHTML = '';
-
-                    data.items.slice(0, 50).forEach(doc => { // Hiển thị 50 dòng đầu
-                        const tr = document.createElement('tr');
-                        const pClass = doc.priority <= 2 ? `p${doc.priority}` : 'p3';
-                        tr.innerHTML = `
-                            <td><b>${doc.id}</b></td>
-                            <td>${doc.title}</td>
-                            <td><span class="badge ${pClass}">Cấp ${doc.priority}</span></td>
-                            <td>${doc.dueDate}</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } catch(err) {
-                    alert('Lỗi định dạng file JSON!');
-                }
-            };
-            reader.readAsText(file);
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
