@@ -2,18 +2,7 @@
   "total": 10,
   "hash_capacity": 1009,
   "load_factor": 0.0099108,
-  "hash_buckets": [
-    {"bucket": 112, "chain": [{"id":"BK00001","title":"Cau truc Du lieu va Giai thuat","priority":1,"dueDate":1791234567}]},
-    {"bucket": 113, "chain": [{"id":"BK00002","title":"Lap trinh Huong doi tuong C++","priority":3,"dueDate":0}]},
-    {"bucket": 114, "chain": [{"id":"BK00003","title":"Co so Tri tue Nhan tao","priority":2,"dueDate":0}]},
-    {"bucket": 115, "chain": [{"id":"BK00004","title":"He dieu hanh va Kien truc May tinh","priority":1,"dueDate":1790999999}]},
-    {"bucket": 116, "chain": [{"id":"BK00005","title":"Giai tich 2 va Dai so Tuyen tinh","priority":2,"dueDate":0}]},
-    {"bucket": 117, "chain": [{"id":"BK00006","title":"Mang may tinh can ban","priority":4,"dueDate":1791555555}]},
-    {"bucket": 118, "chain": [{"id":"BK00007","title":"Co so Du lieu Quan he","priority":3,"dueDate":0}]},
-    {"bucket": 119, "chain": [{"id":"BK00008","title":"Nhap mon Ky thuat Phan mem","priority":2,"dueDate":1791888888}]},
-    {"bucket": 120, "chain": [{"id":"BK00009","title":"Xac suat Thong ke cho AI","priority":1,"dueDate":0}]},
-    {"bucket": 142, "chain": [{"id":"BK00010","title":"Thiet ke He thong Thong tin","priority":5,"dueDate":1790888888}]}
-  ],
+  "hash_buckets": [],
   "items": [
     {"id":"BK00001","title":"Cau truc Du lieu va Giai thuat","priority":1,"dueDate":1791234567},
     {"id":"BK00002","title":"Lap trinh Huong doi tuong C++","priority":3,"dueDate":0},
