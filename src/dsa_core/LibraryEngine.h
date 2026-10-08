@@ -11,6 +11,7 @@ private:
 
 public:
 
+
     // [BỔ SUNG CHO VISUALIZER]: Cung cấp thông số cấu trúc dữ liệu cho Tầng 1
     std::string getHashTableVisualJson() const { return docTable.getBucketsJson(); }
     size_t getHashTableCapacity() const { return docTable.getCapacity(); }

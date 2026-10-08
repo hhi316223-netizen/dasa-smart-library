@@ -21,7 +21,8 @@ public:
         out << "  \"total\": " << docs.size() << ",\n";
         out << "  \"hash_capacity\": " << engine.getHashTableCapacity() << ",\n";
         out << "  \"load_factor\": " << engine.getHashTableLoadFactor() << ",\n";
-        out << "  \"hash_buckets\": [],\n";
+        // Nối trực tiếp chuỗi JSON các bucket từ Tầng 2 DSA Core
+        out << "  \"hash_buckets\": " << engine.getHashTableVisualJson() << ",\n";
         out << "  \"items\": [\n";
         for (size_t i = 0; i < docs.size(); ++i) {
             out << "    " << docs[i].toJson();
